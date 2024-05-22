@@ -44,7 +44,7 @@ g4f.debug.logging = True
 def request_interpret(word, context):
     client = Client()
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "user",
@@ -55,7 +55,7 @@ def request_interpret(word, context):
                         "} in the context {",
                         context,
                         "}",
-                        "In this context, {",
+                        "{",
                         word,
                         "} means",
                     ]
@@ -64,7 +64,6 @@ def request_interpret(word, context):
         ],
     )
     return response.choices[0].message.content
-    print(response.choices[0].message.content)
 
 
 class WordRecord:
