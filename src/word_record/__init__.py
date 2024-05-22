@@ -6,8 +6,11 @@ import pyperclip
 drag_flag = True
 mouse_press = (0, 0)
 mouse_release = (0, 0)
-
 record_txt = ""
+
+with open("config.json", "r") as f:
+    config = json.load(f)
+    MOONSHOT_API_KEY = config["MOONSHOT_API_KEY"]
 
 
 def get_select_text():
@@ -41,7 +44,7 @@ import g4f.debug
 g4f.debug.logging = True
 
 
-def request_interpret(word, context):
+def request_interpret_g4f(word, context):
     client = Client()
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -64,6 +67,39 @@ def request_interpret(word, context):
         ],
     )
     return response.choices[0].message.content
+
+
+def request_interpret_moonshot(word,context):
+    from openai import OpenAI
+    
+    client = OpenAI(
+        api_key=MOONSHOT_API_KEY,
+        base_url="https://api.moonshot.cn/v1",
+    )
+    
+    completion = client.chat.completions.create(
+        model="moonshot-v1-32k",
+        messages=[
+            {
+                "role": "user",
+                "content": "".join(
+                    [
+                        "Please interpret the meaning of the word {",
+                        word,
+                        "} in the context {",
+                        context,
+                        "}",
+                        "{",
+                        word,
+                        "} means",
+                    ]
+                ),
+            }
+        ],
+        temperature=0.3,
+    )
+    return completion.choices[0].message.content
+
 
 
 class WordRecord:
@@ -94,9 +130,9 @@ class WordRecord:
         else:
             self._mouse_release = (x, y)
             self._record_txt = self._get_select_text()
-            print("record_txt:", self._record_txt)
 
     def _show_notification(self, title, message):
+        print("show_notification")
         notification.notify(
             title=title,
             message=message,
@@ -105,15 +141,17 @@ class WordRecord:
         )
 
     def record_word(self):
+        print("record_word")
         self._word = self._record_txt
 
     def record_context(self):
+        print("record_context")
         self._context = self._record_txt
 
         if self._word == "" or self._context == "":
             self._show_notification("错误", "未选择单词或Context")
         else:
-            self._interpret = request_interpret(self._word, self._context)
+            self._interpret = request_interpret_moonshot(self._word, self._context)
             self._show_notification(
                 "记录成功",
                 "".join(
