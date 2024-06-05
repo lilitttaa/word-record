@@ -51,7 +51,7 @@ def write_to_jsonl(word, context, interpret):
         "interpret": interpret,
         "time": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
     }
-    json_obj = json.dumps(obj, ensure_ascii=False, indent=4)
+    json_obj = json.dumps(obj, ensure_ascii=False)
 
     with open( WORD_SAVE_PATH + "/word_record.jsonl", "a",encoding="utf-8") as f:
         f.write(json_obj + "\n")
