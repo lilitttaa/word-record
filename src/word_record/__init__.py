@@ -54,7 +54,7 @@ def write_to_jsonl(word, context, interpret):
         "time": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
     }
     json_obj = json.dumps(obj, ensure_ascii=False, indent=4)
-    with open("word_record.jsonl", "a") as f:
+    with open("word_record.jsonl", "a",encoding="utf-8") as f:
         f.write(json_obj + "\n")
 
 
@@ -96,7 +96,7 @@ def request_interpret_moonshot(word, context):
                 "role": "user",
                 "content": "".join(
                     [
-                        "Please interpret the meaning of the word {",
+                        "Please interpret the meaning of the word briefly{",
                         word,
                         "} in this context {",
                         context,
@@ -115,17 +115,20 @@ def request_interpret_moonshot(word, context):
 
 def main():
     while True:
-        word = input("Please input the word you want to record:")
+        word = input("- Please input the word you want to record:")
+        print("\n")
         if not check_valid(word):
             continue
-        context = input("Please input the context:")
-        if not check_valid(word):
+        context = input("- Please input the context:")
+        print("\n")
+        if not check_valid(context):
             continue
         try:
             interpret = request_interpret_moonshot(word, context)
         except Exception as e:
             continue
         print(interpret)
+        print("\n")
         write_to_jsonl(word, context, interpret)
 
 if __name__ == "__main__":
