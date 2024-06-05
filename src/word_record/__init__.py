@@ -1,18 +1,16 @@
 import json
 import time
-from pynput import mouse, keyboard
-import pyperclip
 
 drag_flag = True
 mouse_press = (0, 0)
 mouse_release = (0, 0)
 record_txt = ""
 
-with open("config.json", "r") as f:
+with open("config.json", "r",encoding="utf-8") as f:
     config = json.load(f)
     MOONSHOT_API_KEY = config["MOONSHOT_API_KEY"]
+    WORD_SAVE_PATH = config["WORD_SAVE_PATH"]
 
-from plyer import notification
 from g4f.client import Client
 import g4f.debug
 
@@ -54,7 +52,8 @@ def write_to_jsonl(word, context, interpret):
         "time": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
     }
     json_obj = json.dumps(obj, ensure_ascii=False, indent=4)
-    with open("word_record.jsonl", "a",encoding="utf-8") as f:
+
+    with open( WORD_SAVE_PATH + "/word_record.jsonl", "a",encoding="utf-8") as f:
         f.write(json_obj + "\n")
 
 
