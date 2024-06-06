@@ -71,9 +71,9 @@ class InterpretGenerator:
         )
 
     def generate_interpret(self, word, context):
-        if not check_valid(word):
+        if not self._check_valid(word):
             raise Exception("Invalid input word")
-        if not check_valid(context):
+        if not self._check_valid(context):
             raise Exception("Invalid input context")
         return self._request_interpret(word, context)
 
